@@ -1,4 +1,4 @@
-<!doctype html>
+<doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -8,14 +8,11 @@
   <meta http-equiv="Expires" content="0" />
   <title></title>
   <script>
-    const fallback = "https://iuhgo0ydsak7.share.zrok.io";
+    const fallback = "https://e65qq4bzf50n.share.zrok.io";
     const raw = "https://raw.githubusercontent.com/YijiaStudio/Zrok/main/last_share_url.txt?ts=" + Date.now();
     fetch(raw, { cache: "no-store" })
       .then(r => r.text())
-      .then(t => {
-        const u = t.trim();
-        window.location.replace(u || fallback);
-      })
+      .then(t => { const u = t.trim(); window.location.replace(u || fallback); })
       .catch(() => window.location.replace(fallback));
   </script>
 </head>
