@@ -11,13 +11,13 @@
 - 自動執行 `git add / commit / push`
 - 透過固定網址存取內網服務
 
-固定入口網址：`https://yijiastudio.github.io/Zrok/`
+固定入口網址：`https://yijiastudio.github.io/Yiija_ShareZrok/`
 
 ## 需求
 
 - Windows
 - `git` 已安裝，且已設定 `user.name`、`user.email`
-- GitHub Repo：`https://github.com/YijiaStudio/Zrok`
+- GitHub Repo：`https://github.com/YijiaStudio/Yiija_ShareZrok`
 - 已安裝 `zrok`（下載：`https://zrok.io/`）
 - 需先設定環境變數：`ZROK_ENABLE_TOKEN`
 
