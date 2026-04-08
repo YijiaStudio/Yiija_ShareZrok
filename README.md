@@ -1,6 +1,6 @@
-# Yijia_Zrok
+# Yiija_ShareZrok
 
-這是一個內網穿透及網址轉發工具。  
+這是一個內網穿透及網址轉發空間。  
 使用者可輸入本地服務位置，自動更新 Git 並維持固定入口網址。
 
 ## 功能
@@ -18,14 +18,8 @@
 - Windows
 - `git` 已安裝，且已設定 `user.name`、`user.email`
 - GitHub Repo：`https://github.com/YijiaStudio/Zrok`
-- 已安裝 `zrok`（下載：`https://docs.zrok.io/docs/guides/install/`）
+- 已安裝 `zrok`（下載：`https://zrok.io/`）
 - 需先設定環境變數：`ZROK_ENABLE_TOKEN`
-
-## 主要檔案
-
-- `run_zrok_share.bat`：一鍵自動化腳本
-- `index.html`：GitHub Pages 跳轉頁
-- `last_share_url.txt`：最近一次公開網址
 
 ## 授權
 
