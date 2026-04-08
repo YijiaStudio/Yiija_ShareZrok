@@ -13,33 +13,22 @@
 
 固定入口網址：`https://yijiastudio.github.io/Zrok/`
 
-## 使用方式
-
-```bat
-run_zrok_share.bat
-```
-
-指定本地服務：
-
-```bat
-run_zrok_share.bat "http://127.0.0.1:3000"
-```
-
-預設本地服務：
-
-```text
-http://127.0.0.1:7860
-```
-
 ## 需求
 
 - Windows
 - `git` 已安裝，且已設定 `user.name`、`user.email`
 - GitHub Repo：`https://github.com/YijiaStudio/Zrok`
-- 專案目錄內包含 `zrok.exe`
+- 已安裝 `zrok`（下載：`https://docs.zrok.io/docs/guides/install/`）
+- 需先設定環境變數：`ZROK_ENABLE_TOKEN`
 
 ## 主要檔案
 
 - `run_zrok_share.bat`：一鍵自動化腳本
 - `index.html`：GitHub Pages 跳轉頁
 - `last_share_url.txt`：最近一次公開網址
+
+## 授權
+
+- 上游 `zrok` 相關內容遵循 `LICENSE`（Apache License 2.0）。
+- 本專案新增腳本/文件另附 `LICENSE-MIT`。
+

@@ -7,17 +7,20 @@ set "REPO_URL=https://github.com/YijiaStudio/Zrok.git"
 set "PAGES_URL=https://yijiastudio.github.io/Zrok/"
 set "URL_FILE=%~dp0last_share_url.txt"
 set "INDEX_FILE=%~dp0index.html"
+set "PID_FILE=%~dp0zrok_share.pid"
 set "PS_EXE=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
 set "TMP_URL_FILE=%TEMP%\zrok_share_url.txt"
+set "TMP_PID_FILE=%TEMP%\zrok_share_pid.txt"
+set "ENABLE_TOKEN=%ZROK_ENABLE_TOKEN%"
 set "TARGET_URL=%~1"
 if not defined TARGET_URL call :detect_target_url
 if not defined TARGET_URL set "TARGET_URL=http://127.0.0.1:8188"
 
-echo ===========================
-echo Zrok -> GitHub 自動同步器
-echo ===========================
+echo ======================================================
 echo.
-echo [INFO] 本次本地來源網址: %TARGET_URL%
+echo [INFO] 本地服務: %TARGET_URL%
+echo.
+echo ======================================================
 
 if not exist "%~dp0zrok.exe" (
   echo [錯誤] 找不到 zrok.exe
@@ -56,14 +59,46 @@ if not defined ORIGIN_URL (
 echo.
 echo [INFO] 重新啟用 zrok...
 zrok disable >nul 2>&1
-zrok.exe enable 7SJYQKzQ5LKG
+if not defined ENABLE_TOKEN (
+  echo [錯誤] 未設定 ZROK_ENABLE_TOKEN
+  echo [修正] 在系統環境變數新增 ZROK_ENABLE_TOKEN 後重試
+  exit /b 1
+)
+zrok.exe enable "%ENABLE_TOKEN%"
 if errorlevel 1 (
   echo [錯誤] zrok enable 失敗，請先手動確認 token 是否有效
   exit /b 1
 )
 
-echo [INFO] 啟動 zrok share 視窗（會常駐，關閉它就會中斷穿透）
-start "zrok-share-public" "%~dp0zrok.exe" share public "%TARGET_URL%" --headless
+echo [INFO] 清理舊的 zrok share 背景程序
+if exist "%PID_FILE%" (
+  set /p OLD_PID=<"%PID_FILE%"
+  if defined OLD_PID (
+    "%PS_EXE%" -NoProfile -Command "try { Stop-Process -Id %OLD_PID% -Force -ErrorAction Stop } catch {}" >nul 2>&1
+  )
+  del /f /q "%PID_FILE%" >nul 2>&1
+)
+"%PS_EXE%" -NoProfile -Command "Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'zrok.exe' -and $_.CommandLine -match 'share public' } | ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} }" >nul 2>&1
+
+echo [INFO] 背景啟動 zrok share（不開新視窗）
+start "" /b cmd /c ""%~dp0zrok.exe" share public "%TARGET_URL%" --headless"
+for /l %%n in (1,1,10) do (
+  set "SHARE_PID="
+  if exist "%TMP_PID_FILE%" del /f /q "%TMP_PID_FILE%" >nul 2>&1
+  "%PS_EXE%" -NoProfile -Command "$target='%TARGET_URL%'; $p = Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'zrok.exe' -and $_.CommandLine -match 'share public' -and $_.CommandLine -match [regex]::Escape($target) } | Sort-Object CreationDate -Descending | Select-Object -First 1; if ($p) { $p.ProcessId | Out-File -Encoding ascii '%TMP_PID_FILE%' }" >nul 2>&1
+  if exist "%TMP_PID_FILE%" (
+    set /p SHARE_PID=<"%TMP_PID_FILE%"
+    del /f /q "%TMP_PID_FILE%" >nul 2>&1
+  )
+  if defined SHARE_PID goto :pid_ready
+  timeout /t 1 /nobreak >nul
+)
+:pid_ready
+if not defined SHARE_PID (
+  echo [錯誤] 無法啟動 zrok share 背景程序
+  exit /b 1
+)
+> "%PID_FILE%" echo %SHARE_PID%
 
 set "SHARE_URL="
 if exist "%TMP_URL_FILE%" del /f /q "%TMP_URL_FILE%" >nul 2>&1
@@ -78,6 +113,8 @@ for /l %%n in (1,1,90) do (
 )
 
 echo [錯誤] 90 秒內抓不到 zrok 公開網址
+"%PS_EXE%" -NoProfile -Command "try { Stop-Process -Id %SHARE_PID% -Force -ErrorAction Stop } catch {}" >nul 2>&1
+del /f /q "%PID_FILE%" >nul 2>&1
 exit /b 1
 
 :got_url
@@ -126,6 +163,7 @@ if errorlevel 1 (
 echo.
 echo [完成] 固定入口網址:
 echo %PAGES_URL%
+start "" "%PAGES_URL%"
 echo.
 echo [提示] 下次只要再次執行這個 .bat，就會自動更新跳轉網址。
 exit /b 0
