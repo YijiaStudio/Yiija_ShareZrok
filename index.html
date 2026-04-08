@@ -1,4 +1,4 @@
-<doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -12,7 +12,10 @@
     const raw = "https://raw.githubusercontent.com/YijiaStudio/Zrok/main/last_share_url.txt?ts=" + Date.now();
     fetch(raw, { cache: "no-store" })
       .then(r => r.text())
-      .then(t => { const u = t.trim(); window.location.replace(u || fallback); })
+      .then(t => {
+        const u = t.trim();
+        window.location.replace(u || fallback);
+      })
       .catch(() => window.location.replace(fallback));
   </script>
 </head>
