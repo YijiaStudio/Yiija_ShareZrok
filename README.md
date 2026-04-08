@@ -24,5 +24,3 @@
 ## 授權
 
 - 上游 `zrok` 相關內容遵循 `LICENSE`（Apache License 2.0）。
-- 本專案新增腳本/文件另附 `LICENSE-MIT`。
-
