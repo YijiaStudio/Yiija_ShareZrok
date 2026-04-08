@@ -1,4 +1,4 @@
-<doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -6,9 +6,18 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta http-equiv="refresh" content="0; url=https://iuhgo0ydsak7.share.zrok.io" />
   <title></title>
-  <script>window.location.replace("https://iuhgo0ydsak7.share.zrok.io");</script>
+  <script>
+    const fallback = "https://iuhgo0ydsak7.share.zrok.io";
+    const raw = "https://raw.githubusercontent.com/YijiaStudio/Zrok/main/last_share_url.txt?ts=" + Date.now();
+    fetch(raw, { cache: "no-store" })
+      .then(r => r.text())
+      .then(t => {
+        const u = t.trim();
+        window.location.replace(u || fallback);
+      })
+      .catch(() => window.location.replace(fallback));
+  </script>
 </head>
 <body style="margin:0;background:#fff;"></body>
 </html>
