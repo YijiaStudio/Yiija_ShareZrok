@@ -1,126 +1,45 @@
-![zrok logo](docs/images/zrok_cover.png)
+# Yijia_Zrok
 
-**Note: If you upgrade to `v1.0.0` and you receive an error message like this:**
+這是一個內網穿透及網址轉發工具。  
+使用者可輸入本地服務位置，自動更新 Git 並維持固定入口網址。
 
-```
-[ERROR]: unable to create share (error getting zrok client: client version error accessing api endpoint 'https://api.zrok.io': [POST /clientVersionCheck] clientVersionCheck (status 404): {}: [POST /clientVersionCheck] clientVersionCheck (status 404): {})
-```
+## 功能
 
-Use the command `zrok rebase apiEndpoint https://api-v1.zrok.io/` to update your environment for the `v1.0.0` release.
+- 啟動 `zrok` 公開穿透
+- 取得最新 `https://*.zrok.io` 公開網址
+- 自動更新 `index.html` 跳轉頁
+- 自動執行 `git add / commit / push`
+- 透過固定網址存取內網服務
 
-## Your Secure Internet Sharing Perimeter
+固定入口網址：`https://yijiastudio.github.io/Zrok/`
 
-`zrok` is a next-generation, peer-to-peer sharing platform built on top of [OpenZiti](https://docs.openziti.io/docs/learn/introduction/), a programmable zero-trust network overlay. `zrok` is a _Ziti Native Application_.
+## 使用方式
 
-`zrok` facilitates both public and private sharing. Public sharing allows you to share securely with non-`zrok` users over the public internet. Private sharing allows you to directly share peer-to-peer with other `zrok` users. No security or firewall changes are required for either type of sharing. No inbound connectivity is required. The OpenZiti overlay provides peer-to-peer connectivity without IP addresses, and employs end-to-end encryption for world-class security.
-
-Like other offerings in this space, `zrok` allows users to create tunnels for HTTP, TCP and UDP network resources. `zrok` additionally allows users to easily and rapidly share files, web content, and custom resources in a peer-to-peer manner.
-
-![zrok Web Console](docs/images/zrok_web_console.png)
-
-## Frictionless
-
-You can be up and sharing using the `zrok.io` service in minutes. Here is a synopsis of what's involved:
-
-* [Install the package or download the binary for your platform](https://docs.zrok.io/docs/guides/install/).
-* `zrok invite` to create an account with the service (use the [NetFoundry hosted zrok.io service](https://docs.zrok.io/docs/getting-started/))
-* `zrok enable` to enable your shell environment for sharing with the service
-
-### And then... sharing...
-
-Easily share private network resources with public internet users, securely, without having to alter any of your local network configuration:
-
-```
-$ zrok share public localhost:8080
+```bat
+run_zrok_share.bat
 ```
 
-![zrok share public](docs/images/zrok_share_public.png)
+指定本地服務：
 
-```
-$ curl -s https://dslno640nct4.share.zrok.io | head
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <meta name="theme-color" content="#000000"/>
-    <meta name="description" content="zrok ui"/>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+```bat
+run_zrok_share.bat "http://127.0.0.1:3000"
 ```
 
-Share "network drives" with public and private users running on Windows, macOS, or Linux systems:
+預設本地服務：
 
-```
-$ zrok share public --backend-mode drive ~/Repos/zrok
-```
-
-![zrok share public -b drive](docs/images/zrok_share_public_drive.png)
-
-Mounting and working with shared drives is simple, and works with any applications on the end users' systems:
-
-![mounted zrok drive](docs/images/zrok_share_public_drive_explorer.png)
-
-See the [Concepts and Getting Started Guide](https://docs.zrok.io/docs/getting-started) for a full overview.
-
-## The `zrok` SDK
-
-`zrok` includes an SDK that allows you to embed `zrok` sharing capabilities into your own applications. If you're familiar with a golang `net.Conn` and `net.Listener`, you'll be right at home with our SDK.
-
-### A Simple `zrok` Sharing Service
-
-```go
-// load enabled zrok environment
-root, err := environment.LoadRoot()
-
-// request a share for your resource
-shr, err := sdk.CreateShare(root, &sdk.ShareRequest{
-    BackendMode: sdk.TcpTunnelBackendMode,
-    ShareMode:   sdk.PrivateShareMode,
-	// ...
-})
-
-// accept requests for your resource
-listener, err := sdk.NewListener(shr.Token, root)
+```text
+http://127.0.0.1:7860
 ```
 
-### A Simple `zrok` Client
+## 需求
 
-```go
-// load enabled zrok environment
-root, err := environment.LoadRoot()
+- Windows
+- `git` 已安裝，且已設定 `user.name`、`user.email`
+- GitHub Repo：`https://github.com/YijiaStudio/Zrok`
+- 專案目錄內包含 `zrok.exe`
 
-// request access to a shared zrok resource
-acc, err := sdk.CreateAccess(root, &sdk.AccessRequest{ShareToken: shrToken})
+## 主要檔案
 
-// establish a connection to the resource directly
-conn, err := sdk.NewDialer(shrToken, root)
-```
-
-This [blog post](https://blog.openziti.io/the-zrok-sdk) provides more details for [getting started](https://blog.openziti.io/the-zrok-sdk) with the `zrok` SDK.
-
-## Self-Hosting
-
-`zrok` is designed to scale up to support extremely large service instances. `zrok.io` is a public service instance operated by NetFoundry using the same code base that is available to self-hosted environments.
-
-`zrok` is also designed to scale down to support extremely small deployments. Run `zrok` and OpenZiti on a Raspberry Pi!
-
-The single `zrok` binary contains everything you need to operate `zrok` environments and also host your own service instances. Just add an OpenZiti network and you're up and running.
-
-See the [Self-Hosting Guide](https://docs.zrok.io/docs/guides/self-hosting/self_hosting_guide/) for details on getting your own `zrok` service instance running.
-
-## zrok Office Hours
-
-We maintain a growing playlist of videos focusing on various aspects of `zrok`. This includes the "office hours" series, which are longer-format videos digging into the implementation of `zrok` and showcasing some of the latest features and capabilities:
-
-[![zrok Office Hours](https://img.youtube.com/vi/Edqv7yRmXb0/0.jpg)](https://www.youtube.com/watch?v=Edqv7yRmXb0&list=PLMUj_5fklasLuM6XiCNqwAFBuZD1t2lO2)
-
-
-
-## Building
-
-If you are interested in building `zrok` for yourself instead of using a released package, please refer to [BUILD.md](./BUILD.md)
-
-## Contributing
-
-If you'd like to contribute back to `zrok`, that'd be great. Please see our [CONTRIBUTING.md](./CONTRIBUTING.md) page and
-abide by the [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md).
+- `run_zrok_share.bat`：一鍵自動化腳本
+- `index.html`：GitHub Pages 跳轉頁
+- `last_share_url.txt`：最近一次公開網址

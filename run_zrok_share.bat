@@ -5,16 +5,19 @@ title Zrok Auto Sync + GitHub Pages Redirect
 
 set "REPO_URL=https://github.com/YijiaStudio/Zrok.git"
 set "PAGES_URL=https://yijiastudio.github.io/Zrok/"
-set "LOG_FILE=%~dp0zrok_share.log"
 set "URL_FILE=%~dp0last_share_url.txt"
 set "INDEX_FILE=%~dp0index.html"
+set "PS_EXE=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
+set "TMP_URL_FILE=%TEMP%\zrok_share_url.txt"
 set "TARGET_URL=%~1"
-if not defined TARGET_URL set "TARGET_URL=http://127.0.0.1:7860"
+if not defined TARGET_URL call :detect_target_url
+if not defined TARGET_URL set "TARGET_URL=http://127.0.0.1:8188"
 
 echo ===========================
 echo Zrok -> GitHub 自動同步器
 echo ===========================
 echo.
+echo [INFO] 本次本地來源網址: %TARGET_URL%
 
 if not exist "%~dp0zrok.exe" (
   echo [錯誤] 找不到 zrok.exe
@@ -55,26 +58,26 @@ echo [INFO] 重新啟用 zrok...
 zrok disable >nul 2>&1
 zrok.exe enable 7SJYQKzQ5LKG
 if errorlevel 1 (
-  echo [錯誤] zrok enable 失敗
+  echo [錯誤] zrok enable 失敗，請先手動確認 token 是否有效
   exit /b 1
 )
 
-if exist "%LOG_FILE%" del /f /q "%LOG_FILE%"
-
 echo [INFO] 啟動 zrok share 視窗（會常駐，關閉它就會中斷穿透）
-start "zrok-share-public" cmd /c ""%~dp0zrok.exe" share public "%TARGET_URL%" > "%LOG_FILE%" 2>&1"
+start "zrok-share-public" "%~dp0zrok.exe" share public "%TARGET_URL%" --headless
 
 set "SHARE_URL="
+if exist "%TMP_URL_FILE%" del /f /q "%TMP_URL_FILE%" >nul 2>&1
 for /l %%n in (1,1,90) do (
-  for /f "tokens=1,* delims= " %%a in ('findstr /r /c:"https://[a-zA-Z0-9.-]*\.zrok\.io" "%LOG_FILE%" 2^>nul') do (
-    set "CANDIDATE=%%a"
-    if /I "!CANDIDATE:~0,8!"=="https://" set "SHARE_URL=!CANDIDATE!"
+  "%PS_EXE%" -NoProfile -Command "$target = '%TARGET_URL%'; $json = & '%~dp0zrok.exe' overview 2>$null; if (-not $json) { exit 0 }; $obj = $json | ConvertFrom-Json; $shares = @(); foreach ($env in $obj.environments) { if ($env.shares) { $shares += $env.shares } }; $matched = $shares | Where-Object { $_.backendProxyEndpoint -eq $target -and $_.frontendEndpoint } | Sort-Object createdAt -Descending | Select-Object -First 1; if (-not $matched) { $matched = $shares | Where-Object { $_.shareMode -eq 'public' -and $_.frontendEndpoint } | Sort-Object createdAt -Descending | Select-Object -First 1 }; if ($matched) { $matched.frontendEndpoint | Out-File -Encoding ascii '%TMP_URL_FILE%' }" >nul 2>&1
+  if exist "%TMP_URL_FILE%" (
+    set /p SHARE_URL=<"%TMP_URL_FILE%"
+    del /f /q "%TMP_URL_FILE%" >nul 2>&1
   )
   if defined SHARE_URL goto :got_url
   timeout /t 1 /nobreak >nul
 )
 
-echo [錯誤] 90 秒內抓不到 zrok 公開網址，請查看 zrok_share.log
+echo [錯誤] 90 秒內抓不到 zrok 公開網址
 exit /b 1
 
 :got_url
@@ -125,4 +128,23 @@ echo [完成] 固定入口網址:
 echo %PAGES_URL%
 echo.
 echo [提示] 下次只要再次執行這個 .bat，就會自動更新跳轉網址。
-echo [INFO] 本次本地來源網址: %TARGET_URL%
+exit /b 0
+
+:detect_target_url
+set "TARGET_URL="
+call :try_url "http://172.30.20.1:8188"
+if defined TARGET_URL exit /b 0
+call :try_url "http://127.0.0.1:8188"
+if defined TARGET_URL exit /b 0
+call :try_url "http://127.0.0.1:7860"
+if defined TARGET_URL exit /b 0
+call :try_url "http://localhost:8188"
+if defined TARGET_URL exit /b 0
+call :try_url "http://localhost:7860"
+exit /b 0
+
+:try_url
+set "CANDIDATE_URL=%~1"
+"%PS_EXE%" -NoProfile -Command "try { $r = Invoke-WebRequest -Uri '%CANDIDATE_URL%' -TimeoutSec 3 -UseBasicParsing; if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 500) { exit 0 } else { exit 1 } } catch { exit 1 }" >nul 2>&1
+if not errorlevel 1 set "TARGET_URL=%CANDIDATE_URL%"
+exit /b 0
