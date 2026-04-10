@@ -1,4 +1,4 @@
-<doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -9,6 +9,18 @@
   <title>Comfy</title>
   <script>
     const name = "Comfy";
-    const fallback = "https://u9ichs3fl3jc.share.zrok.io";
-    const raw = "https://raw.githubusercontent.com/YijiaStudio/Yiija_ShareZrok/main/share_urls.txt?ts=146962924410850";
-    fetch(raw, { cache: "no-store" }
+    const fallback = "https://afndrtlepslh.share.zrok.io";
+    const raw = "https://raw.githubusercontent.com/YijiaStudio/Yiija_ShareZrok/main/share_urls.txt?ts=155422780217383";
+    fetch(raw, { cache: "no-store" })
+      .then(r => r.text())
+      .then(t => {
+        const lines = t.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+        const hit = lines.map(l => l.split('|')).find(p => (p[0] || '').trim() === name);
+        const u = hit ? (hit[1] || '').trim() : '';
+        window.location.replace(u || fallback);
+      })
+      .catch(() => window.location.replace(fallback));
+  </script>
+</head>
+<body style="margin:0;background:#fff;"></body>
+</html>
