@@ -51,7 +51,13 @@ $tabs = foreach ($n in $names) {
   [pscustomobject]@{ name = $n; safe = $safe; url = $u }
 }
 
-$tabsJson = ($tabs | ConvertTo-Json -Depth 4 -Compress)
+$tabLinks = foreach ($t in $tabs) {
+  $href = $t.url
+  if (-not $href) { $href = "./$($t.safe)/" }
+  "<a class=""tab"" href=""$href"">$($t.name)</a>"
+}
+
+$linksHtml = ($tabLinks -join "`r`n    ")
 
 $html = @"
 <!doctype html>
@@ -69,46 +75,13 @@ $html = @"
     .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 14px}
     a.tab{border:1px solid #ddd;background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:700;text-decoration:none;color:#111}
     a.tab:hover{border-color:#0057ff;color:#0057ff}
-    .panel{border:1px solid #eee;border-radius:14px;padding:14px}
-    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .url{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;word-break:break-all}
-    a.link{color:#0057ff;text-decoration:none;font-weight:700}
   </style>
 </head>
 <body>
   <h1>Yiija Share Zrok</h1>
-  <div class="tabs" id="tabs" role="tablist" aria-label="Services"></div>
-  <div class="panel">
-    <div class="row"><a class="link" id="perma" href="#">Permalink</a></div>
-    <div class="url" id="url" style="margin-top:10px"></div>
+  <div class="tabs">
+    $linksHtml
   </div>
-  <script>
-    const tabs = $tabsJson;
-    const tabsEl = document.getElementById('tabs');
-    const urlEl = document.getElementById('url');
-    const permaEl = document.getElementById('perma');
-
-    function render() {
-      tabsEl.innerHTML = '';
-      tabs.forEach((t) => {
-        const a = document.createElement('a');
-        a.className = 'tab';
-        a.textContent = t.name;
-        a.href = t.url || ('./' + t.safe + '/');
-        a.addEventListener('click', () => showMeta(t));
-        tabsEl.appendChild(a);
-      });
-      if (tabs.length) showMeta(tabs[0]);
-    }
-
-    function showMeta(t) {
-      urlEl.textContent = t.url || '(not found yet)';
-      permaEl.textContent = "Permalink: /" + t.safe + "/";
-      permaEl.href = "./" + t.safe + "/";
-    }
-
-    render();
-  </script>
 </body>
 </html>
 "@
