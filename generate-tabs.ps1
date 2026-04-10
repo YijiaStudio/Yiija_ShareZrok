@@ -7,7 +7,9 @@ param(
 $ErrorActionPreference = 'Stop'
 
 function Get-SafeName([string]$name) {
-  $n = ($name ?? '').Trim()
+  $n = $name
+  if ($null -eq $n) { $n = '' }
+  $n = $n.Trim()
   if (-not $n) { return 'service' }
   $n = $n -replace ' ', '_'
   $safe = [regex]::Replace($n, '[^A-Za-z0-9_-]', '_')

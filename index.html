@@ -1,4 +1,4 @@
-<doctype html>
+<!doctype html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
@@ -22,34 +22,47 @@
 </head>
 <body>
   <h1>Yiija Share Zrok</h1>
-  <div class="tabs" role="tablist" aria-label="Services">
-    <button class="tab" role="tab" aria-selected="true" data-name="Comfy" data-safe="Comfy">Comfy</button>
-    <button class="tab" role="tab" aria-selected="false" data-name="Trellis" data-safe="Trellis">Trellis</button>
-  </div>
-  <div class="panel" id="panel">
+  <div class="tabs" id="tabs" role="tablist" aria-label="Services"></div>
+  <div class="panel">
     <div class="row">
       <a class="btn" id="open" href="#" target="_blank" rel="noopener">Open</a>
       <a class="link" id="perma" href="#">Permalink</a>
     </div>
-    <div class="url" id="url" style="margin-top:10px">Loading...</div>
+    <div class="url" id="url" style="margin-top:10px"></div>
   </div>
   <script>
-    const raw = "https://raw.githubusercontent.com/YijiaStudio/Yiija_ShareZrok/main/share_urls.txt?ts=175012155020750";
-    const tabs = Array.from(document.querySelectorAll('.tab'));
+    const tabs = [{"name":"Comfy","safe":"Comfy","url":"https://s4aqbxnb3b1h.share.zrok.io"},{"name":"Trellis","safe":"Trellis","url":"https://zt6dd21svg1x.share.zrok.io"}];
+    const tabsEl = document.getElementById('tabs');
     const urlEl = document.getElementById('url');
     const openEl = document.getElementById('open');
     const permaEl = document.getElementById('perma');
-ECHO is off.
-    function selectTab(btn) {
-      tabs.forEach(t => t.setAttribute('aria-selected', String(t === btn)));
-      const name = btn.dataset.name;
-      const safe = btn.dataset.safe;
-      permaEl.textContent = "Permalink: /" + safe + "/";
-      permaEl.href = "./" + safe + "/";
-      openEl.href = "#";
-      urlEl.textContent = "Loading " + name + "...";
-ECHO is off.
-      fetch(raw, { cache: "no-store" })
-        .then(r => r.text())
-        .then(t => {
-          const lines = t.split(/\\r?\\n/).map(s => s.trim()).filter(Boolean);
+
+    function render() {
+      tabsEl.innerHTML = '';
+      tabs.forEach((t, i) => {
+        const b = document.createElement('button');
+        b.className = 'tab';
+        b.type = 'button';
+        b.setAttribute('role', 'tab');
+        b.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+        b.textContent = t.name;
+        b.addEventListener('click', () => select(i));
+        tabsEl.appendChild(b);
+      });
+      if (tabs.length) select(0);
+    }
+
+    function select(i) {
+      const btns = Array.from(tabsEl.querySelectorAll('.tab'));
+      btns.forEach((b, idx) => b.setAttribute('aria-selected', String(idx === i)));
+      const t = tabs[i];
+      urlEl.textContent = t.url || '(not found yet)';
+      openEl.href = t.url || '#';
+      permaEl.textContent = Permalink: //;
+      permaEl.href = .//;
+    }
+
+    render();
+  </script>
+</body>
+</html>
