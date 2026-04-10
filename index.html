@@ -11,12 +11,11 @@
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;max-width:980px;margin:40px auto;padding:0 16px}
     h1{font-size:22px;margin:0 0 14px}
     .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 14px}
-    .tab{border:1px solid #ddd;background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:700}
-    .tab[aria-selected="true"]{border-color:#0057ff;color:#0057ff}
+    a.tab{border:1px solid #ddd;background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:700;text-decoration:none;color:#111}
+    a.tab:hover{border-color:#0057ff;color:#0057ff}
     .panel{border:1px solid #eee;border-radius:14px;padding:14px}
     .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     .url{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;word-break:break-all}
-    a.btn{display:inline-block;background:#0057ff;color:#fff;padding:8px 12px;border-radius:10px;text-decoration:none;font-weight:800}
     a.link{color:#0057ff;text-decoration:none;font-weight:700}
   </style>
 </head>
@@ -24,40 +23,32 @@
   <h1>Yiija Share Zrok</h1>
   <div class="tabs" id="tabs" role="tablist" aria-label="Services"></div>
   <div class="panel">
-    <div class="row">
-      <a class="btn" id="open" href="#" target="_blank" rel="noopener">Open</a>
-      <a class="link" id="perma" href="#">Permalink</a>
-    </div>
+    <div class="row"><a class="link" id="perma" href="#">Permalink</a></div>
     <div class="url" id="url" style="margin-top:10px"></div>
   </div>
   <script>
     const tabs = [{"name":"Comfy","safe":"Comfy","url":"https://8p0i8xh9ck6q.share.zrok.io"},{"name":"Trellis","safe":"Trellis","url":"https://o2wg14fb1jtp.share.zrok.io"}];
     const tabsEl = document.getElementById('tabs');
     const urlEl = document.getElementById('url');
-    const openEl = document.getElementById('open');
     const permaEl = document.getElementById('perma');
 
     function render() {
       tabsEl.innerHTML = '';
-      tabs.forEach((t, i) => {
-        const b = document.createElement('button');
-        b.className = 'tab';
-        b.type = 'button';
-        b.setAttribute('role', 'tab');
-        b.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
-        b.textContent = t.name;
-        b.addEventListener('click', () => select(i));
-        tabsEl.appendChild(b);
+      tabs.forEach((t) => {
+        const a = document.createElement('a');
+        a.className = 'tab';
+        a.textContent = t.name;
+        a.href = t.url || ('./' + t.safe + '/');
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.addEventListener('click', () => showMeta(t));
+        tabsEl.appendChild(a);
       });
-      if (tabs.length) select(0);
+      if (tabs.length) showMeta(tabs[0]);
     }
 
-    function select(i) {
-      const btns = Array.from(tabsEl.querySelectorAll('.tab'));
-      btns.forEach((b, idx) => b.setAttribute('aria-selected', String(idx === i)));
-      const t = tabs[i];
+    function showMeta(t) {
       urlEl.textContent = t.url || '(not found yet)';
-      openEl.href = t.url || '#';
       permaEl.textContent = "Permalink: /" + t.safe + "/";
       permaEl.href = "./" + t.safe + "/";
     }
