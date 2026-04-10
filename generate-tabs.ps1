@@ -95,8 +95,6 @@ $html = @"
         a.className = 'tab';
         a.textContent = t.name;
         a.href = t.url || ('./' + t.safe + '/');
-        a.target = '_blank';
-        a.rel = 'noopener';
         a.addEventListener('click', () => showMeta(t));
         tabsEl.appendChild(a);
       });
