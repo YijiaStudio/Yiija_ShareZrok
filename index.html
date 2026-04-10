@@ -33,19 +33,11 @@
 
     const fromQuery = new URLSearchParams(location.search).get('s');
     const fromHash = (location.hash || '').replace(/^#/, '');
-    const saved = localStorage.getItem('yiija_last_service');
-    const key = (fromQuery || fromHash || saved || '').toLowerCase();
+    const key = (fromQuery || fromHash || '').toLowerCase();
     const hit = byKey[key];
     if (hit && hit.url) {
       window.location.replace(hit.url);
     }
-
-    document.querySelectorAll('a.tab').forEach(a => {
-      a.addEventListener('click', () => {
-        const k = a.getAttribute('data-safe') || a.getAttribute('data-name');
-        if (k) localStorage.setItem('yiija_last_service', k);
-      });
-    });
   </script>
 </body>
 </html>
