@@ -114,8 +114,8 @@ $html = @"
       const t = tabs[i];
       urlEl.textContent = t.url || '(not found yet)';
       openEl.href = t.url || '#';
-      permaEl.textContent = `Permalink: /${t.safe}/`;
-      permaEl.href = `./${t.safe}/`;
+      permaEl.textContent = "Permalink: /" + t.safe + "/";
+      permaEl.href = "./" + t.safe + "/";
     }
 
     render();

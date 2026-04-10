@@ -31,7 +31,7 @@
     <div class="url" id="url" style="margin-top:10px"></div>
   </div>
   <script>
-    const tabs = [{"name":"Comfy","safe":"Comfy","url":"https://s4aqbxnb3b1h.share.zrok.io"},{"name":"Trellis","safe":"Trellis","url":"https://zt6dd21svg1x.share.zrok.io"}];
+    const tabs = [{"name":"Comfy","safe":"Comfy","url":"https://8p0i8xh9ck6q.share.zrok.io"},{"name":"Trellis","safe":"Trellis","url":"https://o2wg14fb1jtp.share.zrok.io"}];
     const tabsEl = document.getElementById('tabs');
     const urlEl = document.getElementById('url');
     const openEl = document.getElementById('open');
@@ -58,8 +58,8 @@
       const t = tabs[i];
       urlEl.textContent = t.url || '(not found yet)';
       openEl.href = t.url || '#';
-      permaEl.textContent = Permalink: //;
-      permaEl.href = .//;
+      permaEl.textContent = "Permalink: /" + t.safe + "/";
+      permaEl.href = "./" + t.safe + "/";
     }
 
     render();
