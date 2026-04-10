@@ -1,3 +1,15 @@
+param(
+  [Parameter(Mandatory = $true)][string]$Name,
+  [Parameter(Mandatory = $true)][string]$Fallback,
+  [Parameter(Mandatory = $true)][string]$OutDir,
+  [Parameter(Mandatory = $true)][string]$CacheBust
+)
+
+$ErrorActionPreference = 'Stop'
+
+$raw = "https://raw.githubusercontent.com/YijiaStudio/Yiija_ShareZrok/main/share_urls.txt?ts=$CacheBust"
+
+$html = @"
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,11 +18,11 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Trellis</title>
+  <title>$Name</title>
   <script>
-    const name = "Trellis";
-    const fallback = "https://legqws4don6j.share.zrok.io";
-    const raw = "https://raw.githubusercontent.com/YijiaStudio/Yiija_ShareZrok/main/share_urls.txt?ts=17854272916768";
+    const name = "$Name";
+    const fallback = "$Fallback";
+    const raw = "$raw";
     fetch(raw, { cache: "no-store" })
       .then(r => r.text())
       .then(t => {
@@ -24,3 +36,7 @@
 </head>
 <body style="margin:0;background:#fff;"></body>
 </html>
+"@
+
+New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
+[System.IO.File]::WriteAllText((Join-Path $OutDir 'index.html'), $html, [System.Text.UTF8Encoding]::new($false))
