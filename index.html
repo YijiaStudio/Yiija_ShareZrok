@@ -7,14 +7,49 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <title>Yiija Share Zrok</title>
-  <script>
-    const fallback = "https://afndrtlepslh.share.zrok.io";
-    const raw = "https://raw.githubusercontent.com/YijiaStudio/Yiija_ShareZrok/main/last_share_url.txt?ts=155422780217383";
-    fetch(raw, { cache: "no-store" })
-      .then(r => r.text())
-      .then(t => { const u = t.trim(); window.location.replace(u || fallback); })
-      .catch(() => window.location.replace(fallback));
-  </script>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;max-width:980px;margin:40px auto;padding:0 16px}
+    h1{font-size:22px;margin:0 0 14px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 14px}
+    .tab{border:1px solid #ddd;background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:700}
+    .tab[aria-selected="true"]{border-color:#0057ff;color:#0057ff}
+    .panel{border:1px solid #eee;border-radius:14px;padding:14px}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .url{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;word-break:break-all}
+    a.btn{display:inline-block;background:#0057ff;color:#fff;padding:8px 12px;border-radius:10px;text-decoration:none;font-weight:800}
+    a.link{color:#0057ff;text-decoration:none;font-weight:700}
+  </style>
 </head>
-<body style="margin:0;background:#fff;"></body>
-</html>
+<body>
+  <h1>Yiija Share Zrok</h1>
+  <div class="tabs" role="tablist" aria-label="Services">
+    <button class="tab" role="tab" aria-selected="true" data-name="Comfy" data-safe="Comfy">Comfy</button>
+    <button class="tab" role="tab" aria-selected="false" data-name="Trellis" data-safe="Trellis">Trellis</button>
+  </div>
+  <div class="panel" id="panel">
+    <div class="row">
+      <a class="btn" id="open" href="#" target="_blank" rel="noopener">Open</a>
+      <a class="link" id="perma" href="#">Permalink</a>
+    </div>
+    <div class="url" id="url" style="margin-top:10px">Loading...</div>
+  </div>
+  <script>
+    const raw = "https://raw.githubusercontent.com/YijiaStudio/Yiija_ShareZrok/main/share_urls.txt?ts=175012155020750";
+    const tabs = Array.from(document.querySelectorAll('.tab'));
+    const urlEl = document.getElementById('url');
+    const openEl = document.getElementById('open');
+    const permaEl = document.getElementById('perma');
+ECHO is off.
+    function selectTab(btn) {
+      tabs.forEach(t => t.setAttribute('aria-selected', String(t === btn)));
+      const name = btn.dataset.name;
+      const safe = btn.dataset.safe;
+      permaEl.textContent = "Permalink: /" + safe + "/";
+      permaEl.href = "./" + safe + "/";
+      openEl.href = "#";
+      urlEl.textContent = "Loading " + name + "...";
+ECHO is off.
+      fetch(raw, { cache: "no-store" })
+        .then(r => r.text())
+        .then(t => {
+          const lines = t.split(/\\r?\\n/).map(s => s.trim()).filter(Boolean);
