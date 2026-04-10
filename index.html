@@ -7,13 +7,14 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <title>Yiija Share Zrok</title>
-  <style>body{font-family:Arial,sans-serif;max-width:920px;margin:40px auto;padding:0 16px}h1{font-size:26px;margin:0 0 16px}ul{padding:0;margin:0;list-style:none}li{margin:10px 0;padding:12px;border:1px solid #ddd;border-radius:10px}a{text-decoration:none;color:#0057ff;font-weight:700}.url{display:block;margin-top:6px;color:#333;word-break:break-all;font-size:14px}</style>
+  <script>
+    const fallback = "https://wzuwwm2ueqic.share.zrok.io";
+    const raw = "https://raw.githubusercontent.com/YijiaStudio/Yiija_ShareZrok/main/last_share_url.txt?ts=" + Date.now();
+    fetch(raw, { cache: "no-store" })
+      .then(r => r.text())
+      .then(t => { const u = t.trim(); window.location.replace(u || fallback); })
+      .catch(() => window.location.replace(fallback));
+  </script>
 </head>
-<body>
-  <h1>Yiija Share Zrok</h1>
-  <ul>
-    <li><a href="https://ypx6gn977g91.share.zrok.io" target="_blank" rel="noopener">Comfy</a><span class="url">https://ypx6gn977g91.share.zrok.io</span></li>
-    <li><a href="https://uohc0zz8dl1b.share.zrok.io" target="_blank" rel="noopener">Trellis</a><span class="url">https://uohc0zz8dl1b.share.zrok.io</span></li>
-  </ul>
-</body>
+<body style="margin:0;background:#fff;"></body>
 </html>
