@@ -75,7 +75,6 @@ $html = @"
     .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 14px}
     a.tab{border:1px solid #ddd;background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:700;text-decoration:none;color:#111}
     a.tab:hover{border-color:#0057ff;color:#0057ff}
-    .hint{font-size:12px;color:#666}
   </style>
 </head>
 <body>
@@ -83,7 +82,6 @@ $html = @"
   <div class="tabs">
     $linksHtml
   </div>
-  <div class="hint">Tip: use ?s=Comfy or #Comfy for direct entry</div>
   <script>
     const tabs = $($tabs | ConvertTo-Json -Depth 4 -Compress);
     const byKey = {};
