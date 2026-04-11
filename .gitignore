@@ -14,3 +14,4 @@ generate-root-links.ps1
 zrok-resolve-share.ps1
 test-service-alive.ps1
 .git.zip
+zrok.exe._*
