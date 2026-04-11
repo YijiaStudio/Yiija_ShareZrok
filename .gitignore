@@ -2,7 +2,6 @@
 zrok.exe
 zrok.ico
 services.txt
-last_share_url.txt
 *.url
 CHANGELOG.md
 LICENSE
