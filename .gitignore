@@ -1,0 +1,16 @@
+# 下列僅留在本機，勿進 GitHub（跳板由 Auto 腳本只提交白名單）
+zrok.exe
+zrok.ico
+services.txt
+last_share_url.txt
+*.url
+CHANGELOG.md
+LICENSE
+*Auto_ShareZrok.bat
+*One_ShareZrok.bat
+Auto_ShareZrok.ps1
+generate-redirect.ps1
+generate-root-links.ps1
+zrok-resolve-share.ps1
+test-service-alive.ps1
+.git.zip
