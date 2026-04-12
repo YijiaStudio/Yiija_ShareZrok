@@ -1,6 +1,13 @@
-/* Yiija ShareZrok: load ../share_urls.txt and redirect. CSP-friendly external file. */
+/* Yiija ShareZrok: fetch ../share_urls.txt then go to zrok URL. */
 (function () {
   var FETCH_MS = 12000;
+
+  function cleanTargetUrl(s) {
+    return String(s || "")
+      .trim()
+      .replace(/\r/g, "")
+      .replace(/\n/g, "");
+  }
 
   function setMsg(body, s) {
     var el = document.getElementById("zrok-msg");
@@ -20,6 +27,19 @@
     return fetch(url, merged).finally(function () {
       clearTimeout(t);
     });
+  }
+
+  /** Navigate next macrotask: avoids rare cases where replace() from fetch microtask feels stuck. */
+  function go(urlStr) {
+    var u = cleanTargetUrl(urlStr);
+    if (!u) return;
+    setTimeout(function () {
+      try {
+        window.location.replace(new URL(u).href);
+      } catch (e) {
+        window.location.replace(u);
+      }
+    }, 0);
   }
 
   function run() {
@@ -49,7 +69,6 @@
         return r.text();
       })
       .then(function (t) {
-        setMsg(body, "Resolving URL...");
         t = t.replace(/^\uFEFF/, "");
         var lines = t.split(/\r?\n/);
         for (var i = 0; i < lines.length; i++) {
@@ -62,12 +81,7 @@
           if (svcName.toLowerCase() !== svcL) continue;
           var raw = line.substring(p + 1).trim();
           if (!raw) continue;
-          setMsg(body, "Redirecting...");
-          try {
-            location.replace(new URL(raw).href);
-          } catch (e) {
-            location.replace(raw);
-          }
+          go(raw);
           return;
         }
         setMsg(body, "No URL for " + svc + " in share_urls.txt");
