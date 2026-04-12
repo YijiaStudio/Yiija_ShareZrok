@@ -1,6 +1,7 @@
-/* Yiija ShareZrok: fetch ../share_urls.txt then go to zrok URL. */
+/* Yiija ShareZrok: load ../share_urls.txt then redirect to zrok URL.
+ * Uses XHR + xhr.timeout (fetch + AbortController can hang on some networks / extensions). */
 (function () {
-  var FETCH_MS = 12000;
+  var FETCH_MS = 15000;
 
   function cleanTargetUrl(s) {
     return String(s || "")
@@ -18,18 +19,30 @@
     }
   }
 
-  function fetchWithTimeout(url, options, ms) {
-    var ctrl = new AbortController();
-    var t = setTimeout(function () {
-      ctrl.abort();
-    }, ms);
-    var merged = Object.assign({}, options, { signal: ctrl.signal });
-    return fetch(url, merged).finally(function () {
-      clearTimeout(t);
+  /** Same-origin GET text; timeout enforced by xhr.timeout (reliable vs fetch hang). */
+  function getTextWithTimeout(url, ms) {
+    return new Promise(function (resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", url, true);
+      xhr.timeout = ms;
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState !== 4) return;
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve(xhr.responseText);
+        } else {
+          reject(new Error("HTTP " + xhr.status));
+        }
+      };
+      xhr.onerror = function () {
+        reject(new Error("network"));
+      };
+      xhr.ontimeout = function () {
+        reject(new Error("timeout"));
+      };
+      xhr.send();
     });
   }
 
-  /** Navigate next macrotask: avoids rare cases where replace() from fetch microtask feels stuck. */
   function go(urlStr) {
     var u = cleanTargetUrl(urlStr);
     if (!u) return;
@@ -52,22 +65,10 @@
     var u = new URL("../share_urls.txt", location.href);
     u.searchParams.set("t", String(Date.now()));
 
+    var urlStr = u.toString();
     setMsg(body, "Fetching share_urls.txt...");
 
-    fetchWithTimeout(
-      u.toString(),
-      {
-        cache: "no-store",
-        headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
-      },
-      FETCH_MS
-    )
-      .then(function (r) {
-        if (!r.ok) {
-          throw new Error("HTTP " + r.status);
-        }
-        return r.text();
-      })
+    getTextWithTimeout(urlStr, FETCH_MS)
       .then(function (t) {
         t = t.replace(/^\uFEFF/, "");
         var lines = t.split(/\r?\n/);
@@ -87,11 +88,12 @@
         setMsg(body, "No URL for " + svc + " in share_urls.txt");
       })
       .catch(function (e) {
-        var extra = "";
-        if (e && e.name === "AbortError") {
-          extra = " (timeout " + FETCH_MS / 1000 + "s)";
-        }
-        setMsg(body, "Cannot load share_urls.txt" + extra);
+        var detail = e && e.message ? e.message : String(e);
+        var hint =
+          " Cannot open: " +
+          urlStr +
+          " - If GitHub is slow, retry; or open that .txt link in a new tab.";
+        setMsg(body, "Cannot load share_urls.txt (" + detail + ")." + hint);
       });
   }
 
