@@ -8,7 +8,6 @@ LICENSE
 *Auto_ShareZrok.bat
 *One_ShareZrok.bat
 Auto_ShareZrok.ps1
-generate-redirect.ps1
 generate-root-links.ps1
 zrok-resolve-share.ps1
 test-service-alive.ps1
