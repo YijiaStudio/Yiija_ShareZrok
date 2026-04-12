@@ -9,6 +9,6 @@
 <body data-svc="Comfy">
 <script>(function(){var svc=document.body.getAttribute("data-svc");if(!svc)return;var u=new URL("../share_urls.txt",location.href);u.searchParams.set("t",String(Date.now()));fetch(u.toString(),{cache:"no-store",headers:{"Cache-Control":"no-cache","Pragma":"no-cache"}}).then(function(r){return r.text()}).then(function(t){var lines=t.split(/\r?\n/);for(var i=0;i<lines.length;i++){var line=lines[i].trim();if(!line||line.charAt(0)==="#")continue;var p=line.indexOf("|");if(p<1)continue;if(line.substring(0,p).trim()!==svc)continue;var url=line.substring(p+1).trim();if(url){location.replace(url);return}}document.body.textContent="No URL for "+svc+" in share_urls.txt"}).catch(function(){document.body.textContent="Cannot load share_urls.txt"})})();</script>
 <noscript>JavaScript required to read share_urls.txt</noscript>
-<!-- build 536311353 -->
+<!-- build 2237119333 -->
 </body>
 </html>
