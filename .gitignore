@@ -5,8 +5,6 @@ services.txt
 *.url
 CHANGELOG.md
 LICENSE
-*Auto_ShareZrok.bat
-*One_ShareZrok.bat
 Auto_ShareZrok.ps1
 generate-root-links.ps1
 zrok-resolve-share.ps1
