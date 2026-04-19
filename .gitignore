@@ -6,8 +6,8 @@ services.txt
 CHANGELOG.md
 LICENSE
 Auto_ShareZrok.ps1
-generate-root-links.ps1
-zrok-resolve-share.ps1
-test-service-alive.ps1
+scripts/generate-root-links.ps1
+scripts/zrok-resolve-share.ps1
+scripts/test-service-alive.ps1
 .git.zip
 zrok.exe._*
